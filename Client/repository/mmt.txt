@@ -1,0 +1,39 @@
+## Getting Started
+
+Server and Client java application with CLI
+To start Client application, run Makefile in folder /Client/src: make run
+To start Server application, run Makefile in folder /Server/src: make run
+
+## Folder Structure
+ComputerNetwork_Project/
+│
+├── Client/
+|   ├── bashScript/
+│   ├── bin/
+│   │   ├── 
+│   │   ├── 
+│   │   ├── 
+│   │   └──
+│   │
+│   └── src/
+│       ├── 
+│       ├── 
+│       ├── 
+│       └──
+|
+├── Server/
+|   ├── bashScript/
+│   ├── bin/
+│   │   ├── 
+│   │   ├── 
+│   │   ├── 
+│   │   └──
+│   │
+│   └── src/
+│       ├── 
+│       ├── 
+│       ├── 
+│       └──
+└──README.md
+
+
