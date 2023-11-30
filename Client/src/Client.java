@@ -154,23 +154,25 @@ public class Client implements Runnable{
                         case "fetch":
                             try (Socket download = new Socket(serverResponse, 1235)) {  
                                 String destinationPath = "../repository/" + args[1];
-                                byte[] fileBytes = new byte[1024];
-                                InputStream is = download.getInputStream();
-                                FileOutputStream fos = new FileOutputStream(destinationPath);
-                                BufferedOutputStream bos = new BufferedOutputStream(fos);
-        
-                                int bytesRead;
-                                while ((bytesRead = is.read(fileBytes, 0, fileBytes.length)) != -1) {
-                                    bos.write(fileBytes, 0, bytesRead);
+                                int bytes = 0;
+                                // Open the File where he located in your pc
+                                File file = new File(destinationPath);
+                                FileInputStream fileInputStream
+                                    = new FileInputStream(file);
+                                DataOutputStream dataOutputStream = new DataOutputStream(download.getOutputStream());
+                                // Here we send the File to Server
+                                dataOutputStream.writeLong(file.length());
+                                // Here we  break file into chunks
+                                byte[] buffer = new byte[4 * 1024];
+                                while ((bytes = fileInputStream.read(buffer))
+                                    != -1) {
+                                // Send the file to Server Socket  
+                                dataOutputStream.write(buffer, 0, bytes);
+                                    dataOutputStream.flush();
                                 }
-        
-                                bos.flush();
-                                System.out.println("File downloaded successfully");
-        
-                                bos.close();
-                                fos.close();
-                                is.close();
-                                download.close();
+                                // close the file here
+                                fileInputStream.close();
+                                System.out.println("File received");
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
