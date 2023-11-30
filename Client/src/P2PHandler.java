@@ -17,6 +17,7 @@ public class P2PHandler implements Runnable
             // Getting file name
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             fname = bufferedReader.readLine();
+            System.out.println(fname);
             String filePath = "../repository/" + fname;
             byte[] buffer = new byte[4096];
 

@@ -16,6 +16,7 @@ public class P2P implements Runnable
         try {
             while (!serverSocket.isClosed()) {
                 Socket socket = serverSocket.accept();
+                System.out.println("P2P connection established.");
                 P2PHandler clientHandler = new P2PHandler(socket);
                 Thread thread = new Thread(clientHandler);
                 thread.start();

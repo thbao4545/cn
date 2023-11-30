@@ -150,9 +150,15 @@ public class Client implements Runnable{
                 
                 String serverResponse;
                 while ((serverResponse = in.readLine()) != null) {
+                    System.out.println(serverResponse);
                     switch (args[0]) {
                         case "fetch":
-                            try (Socket download = new Socket(serverResponse, 1235)) {  
+                            try {
+                                Socket download = new Socket(serverResponse, 1235);
+                                BufferedWriter downloadOut = new BufferedWriter(new OutputStreamWriter(download.getOutputStream()));
+                                downloadOut.write(args[1]);
+                                downloadOut.newLine();
+                                downloadOut.flush();
                                 String filePath = "../repository/" + args[1];
                                 try {
                                     InputStream inputStream = download.getInputStream();
@@ -172,6 +178,8 @@ public class Client implements Runnable{
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
+                            } catch (IOException e) {
+                                e.printStackTrace();
                             }
                             break;
                     
