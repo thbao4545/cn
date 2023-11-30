@@ -153,30 +153,26 @@ public class Client implements Runnable{
                     switch (args[0]) {
                         case "fetch":
                             try (Socket download = new Socket(serverResponse, 1235)) {  
-                                String destinationPath = "../repository/" + args[1];
-                                int bytes = 0;
-                                // Open the File where he located in your pc
-                                File file = new File(destinationPath);
-                                FileInputStream fileInputStream
-                                    = new FileInputStream(file);
-                                DataOutputStream dataOutputStream = new DataOutputStream(download.getOutputStream());
-                                // Here we send the File to Server
-                                dataOutputStream.writeLong(file.length());
-                                // Here we  break file into chunks
-                                byte[] buffer = new byte[4 * 1024];
-                                while ((bytes = fileInputStream.read(buffer))
-                                    != -1) {
-                                // Send the file to Server Socket  
-                                dataOutputStream.write(buffer, 0, bytes);
-                                    dataOutputStream.flush();
+                                String filePath = "../repository/" + args[1];
+                                try {
+                                    InputStream inputStream = download.getInputStream();
+                                    FileOutputStream fileOutputStream = new FileOutputStream(filePath);
+                        
+                                    byte[] buffer = new byte[1024];
+                                    int bytesRead;
+                                    while ((bytesRead = inputStream.read(buffer)) != -1) {
+                                        fileOutputStream.write(buffer, 0, bytesRead);
+                                    }
+                        
+                                    fileOutputStream.close();
+                                    inputStream.close();
+                                    download.close();
+                        
+                                    System.out.println("File received successfully!");
+                                } catch (Exception e) {
+                                    e.printStackTrace();
                                 }
-                                // close the file here
-                                fileInputStream.close();
-                                System.out.println("File received");
-                            } catch (IOException e) {
-                                e.printStackTrace();
                             }
-                            
                             break;
                     
                         default:

@@ -18,28 +18,22 @@ public class P2PHandler implements Runnable
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             fname = bufferedReader.readLine();
             String filePath = "../repository/" + fname;
-            int bytes = 0;
-            // Open the File where he located in your pc
-            File file = new File(filePath);
-            FileInputStream fileInputStream
-                = new FileInputStream(file);
-    
-            // Here we send the File to Server
-            DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
-            dataOutputStream.writeLong(file.length());
-            // Here we  break file into chunks
-            byte[] buffer = new byte[4 * 1024];
-            while ((bytes = fileInputStream.read(buffer))
-                != -1) {
-            // Send the file to Server Socket  
-            dataOutputStream.write(buffer, 0, bytes);
-                dataOutputStream.flush();
+            byte[] buffer = new byte[4096];
+
+            FileInputStream fis = new FileInputStream(filePath);
+            BufferedInputStream bis = new BufferedInputStream(fis);
+            OutputStream os = socket.getOutputStream();
+
+            int bytesRead;
+            while ((bytesRead = bis.read(buffer)) != -1) {
+                os.write(buffer, 0, bytesRead);
             }
-            // close the file here
-            fileInputStream.close();
-            System.out.println("File sent successfully");
- 
-        }
+
+            os.flush();
+            bis.close();
+            fis.close();
+    
+            }
         catch (IOException e) {
             closeSocket(socket);
         }
