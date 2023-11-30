@@ -58,20 +58,32 @@ public class Server implements Runnable{
                 String[] args = bashMessage.split(" ");
                 System.out.println(bashMessage);
                 Boolean found = false;
-                for (ClientHandler client : ClientHandler.clientHandlers) {
-                    if (client.IPAddress.equals(args[1])) {
-                        // System.out.println("Bash script connected to client: " + client.IPAddress);
-                        client.command = args[0];
-                        client.bash = bashScriptSocket;
-                        client.isBashConnected = true;
-                        found = true;
-                    }
-                }
-                if (!found) {
-                    bashOut.write("Client not found.");
-                    bashOut.newLine();
+                //Check if there is any client connected
+                if (ClientHandler.clientHandlers.size() == 0) {
+                    bashOut.write("Client is disconnected.\n");
                     bashOut.flush();
-                    bashScriptSocket.close();
+                } 
+                else {
+                    for (ClientHandler client : ClientHandler.clientHandlers) {
+                        //Check if current client is connected
+                        try {
+                            client.out.write("check\n");
+                            client.out.flush();
+                        } catch (IOException e) {
+                            continue;
+                        }
+                        if (client.IPAddress.equals(args[1])) {
+                            client.command = args[0];
+                            client.bash = bashScriptSocket;
+                            client.isBashConnected = true;
+                            found = true;
+                        }
+                    }
+                    if (!found) {
+                        bashOut.write("Client is disconnected.\n");
+                        bashOut.flush();
+                        bashScriptSocket.close();
+                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();

@@ -24,7 +24,8 @@ public class ClientHandler implements Runnable {
             System.out.println("Client connected: " + IPAddress);
         }
         catch (IOException e) {
-            closeEverything(socket, in, out);
+            
+            removeClient();
         }
     }
 
@@ -43,7 +44,7 @@ public class ClientHandler implements Runnable {
                 }
             }
             catch (IOException e) {
-                closeEverything(socket, in, out);
+                removeClient();
             }
         }
     }   
@@ -67,6 +68,7 @@ public class ClientHandler implements Runnable {
                         }
                     } catch (java.net.SocketTimeoutException e) {
                         System.out.println("Timeout occurred while waiting for response from client.");
+                        removeClient();
                     }
                     break;
                 case "discover":
@@ -79,12 +81,13 @@ public class ClientHandler implements Runnable {
                         bashOut.write(filename);
                         bashOut.newLine();
                         bashOut.flush();
+                        clientFile.add(filename);
                     }
                     
                     break;
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            removeClient();
         }
     }
     public void handleClientMessage() {
@@ -126,7 +129,7 @@ public class ClientHandler implements Runnable {
                     break;
             }
         } catch (IOException e) {
-            closeEverything(socket, in, out);
+            removeClient();
         }
 
     }
@@ -140,11 +143,11 @@ public class ClientHandler implements Runnable {
 
     public void removeClient() {
         clientHandlers.remove(this);
-        return;
+        System.out.println("Size reduce");
+        closeEverything(socket, in, out);
     }
 
     public void closeEverything(Socket socket, BufferedReader in, BufferedWriter out) {
-        removeClient();
         try {
             if (!socket.isClosed()) socket.close();
             if (in != null) in.close();
